@@ -29,7 +29,10 @@ export class TransactionsService implements OnModuleInit {
    * @returns Un observable que emite la respuesta del servidor después de crear la transacción.
    */
   createTransaction(transactionInput: CreateTransactionInput) {
-    return this.transactionPublish.send('create_transaction', transactionInput);
+    return this.transactionPublish.send<TransactionEntity>(
+      'create_transaction',
+      transactionInput,
+    );
   }
 
   /**

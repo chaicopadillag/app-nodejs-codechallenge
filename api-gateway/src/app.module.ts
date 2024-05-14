@@ -5,7 +5,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { AppService } from './app.service';
 
 import { CacheModule } from '@/cache';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -26,6 +25,5 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     ModulesModule,
     CacheModule,
   ],
-  providers: [AppService],
 })
 export class AppModule {}

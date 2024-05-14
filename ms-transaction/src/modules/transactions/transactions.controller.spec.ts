@@ -78,7 +78,7 @@ describe('TransactionsController', () => {
       {
         transactionExternalId: 'f58ed7b0-63e0-4fdd-afd9-513312639fe5',
         transactionType: { name: 'Transferencia Bancaria' },
-        transactionStatus: { name: 'pending' },
+        transactionStatus: { name: 'approved' },
         value: 1000,
         createdAt: new Date('2022-05-14T12:00:00.000Z'),
       },
