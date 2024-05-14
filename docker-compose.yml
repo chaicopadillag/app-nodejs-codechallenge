@@ -1,25 +1,120 @@
-version: "3.7"
 services:
   postgres:
     image: postgres:14
-    ports:
-      - "5432:5432"
+    container_name: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=yape
+    networks:
+      - yaperos_net
+    # ports:
+    #   - "5432:5432"
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.5.3
+    image: confluentinc/cp-zookeeper:7.3.0
+    hostname: zookeeper
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - yaperos_net
+    # ports:
+    #   - "2181:2181"
+
   kafka:
-    image: confluentinc/cp-enterprise-kafka:5.5.3
-    depends_on: [zookeeper]
+    image: confluentinc/cp-server:7.3.0
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    # ports:
+    #   - "9092:9092"
+    #   - "9094:9094"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_JMX_PORT: 9991
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_ENABLE: 'false'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+    networks:
+      - yaperos_net
+
+  redis:
+    image: redis:3
+    container_name: redis
+    # ports:
+    # - 6379:6379
+    environment:
+    - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - yaperos_net
+  
+  api-gateway:
+    container_name: api-gateway
+    depends_on:
+      - kafka
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ./api-gateway/src:/usr/src/app/src
     ports:
-      - 9092:9092
+      - "8082:8082"
+    command: yarn dev
+    environment:
+      - NODE_ENV=development
+      - PORT=8082
+      - KAFKA_BROKERS=kafka:29092
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_TTL=86400000
+    networks:
+      - yaperos_net
+  
+  ms-transaction:
+    container_name: ms-transaction
+    depends_on:
+      - postgres
+      - kafka
+    build:
+      context: ./ms-transaction
+      dockerfile: Dockerfile
+    volumes:
+      - ./ms-transaction/src:/usr/src/app/src
+    command: yarn dev
+    environment:
+      - NODE_ENV=development
+      - KAFKA_BROKERS=kafka:29092
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yape?schema=public
+    networks:
+      - yaperos_net
+  
+  ms-anti-fraud:
+    container_name: ms-anti-fraud
+    depends_on:
+      - kafka
+    build:
+      context: ./ms-anti-fraud
+      dockerfile: Dockerfile
+    volumes:
+      - ./ms-anti-fraud/src:/usr/src/app/src
+    command: ["yarn", "dev"]
+    environment:
+      - NODE_ENV=development
+      - KAFKA_BROKERS=kafka:29092
+      - MAX_TRANSACTION_VALUE=1000
+    networks:
+      - yaperos_net
+
+networks:
+  yaperos_net:
+    driver: bridge
