@@ -56,7 +56,7 @@ describe('TransactionsController', () => {
       .createTransaction(createTransactionDto)
       .toPromise();
     expect(result).toBeDefined();
-    expect(result).toEqual(JSON.stringify(dataResponse));
+    expect(result).toStrictEqual(JSON.stringify(dataResponse));
   });
 
   it('should update transaction status', () => {
