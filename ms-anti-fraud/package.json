@@ -62,7 +62,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -71,6 +71,20 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/config/*",
+      "/src/modules/transactions/transactions.module.ts",
+      "/src/modules/modules.module.ts",
+      "/src/modules/index.ts",
+      "/src/transports/*",
+      "/src/app.module.ts",
+      "/src/main.ts",
+      "/.eslintrc.js"
+    ],
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
   }
 }
