@@ -68,7 +68,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -76,7 +76,25 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/prisma/*",
+      "/src/config/*",
+      "/src/modules/transactions/transactions.module.ts",
+      "/src/modules/transactions/dto/*",
+      "/src/modules/transactions/mappers/interfaces/*",
+      "/src/modules/modules.module.ts",
+      "/src/seed/*",
+      "/src/modules/index.ts",
+      "/src/transports/*",
+      "/src/app.module.ts",
+      "/src/main.ts",
+      "/.eslintrc.js"
+    ],
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
   }
 }
