@@ -4,7 +4,7 @@
 
 Consta de 3 Microservicios Node.js `api-gateway` para manejar las peticiones del cliente (Graphql), integrado con Redis para manejar cache, `ms-transaction` para guardar datos en la base de datos y `ms-anti-fraud` apra procesar datos, validar,etc.
 
-![Arquitectura](https://github.com/chaicopadillag/app-nodejs-codechallenge/blob/main/arquitectura.png)
+![Arquitectura](https://raw.githubusercontent.com/chaicopadillag/app-nodejs-codechallenge/develop/arquitectura.png)
 
 Sigue las pasos para correr los microservicios de la applicación.
 
