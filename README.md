@@ -1,64 +1,73 @@
 # APP Transactions
 
-## Arquitectura:
+## Arquitectura
 
-Consta de 3 Microservicios Node.js `api-gateway` para manejar las peticiones del cliente (Graphql), integrado con Redis para manejar cache, `ms-transaction` para guardar datos en la base de datos y `ms-anti-fraud` apra procesar datos, validar,etc.
+La aplicación consta de tres microservicios en Node.js:
+
+- **api-gateway**: Maneja las solicitudes del cliente utilizando GraphQL y está integrado con Redis para la gestión de la caché.
+- **ms-transaction**: Se encarga de almacenar datos en la base de datos.
+
+- **ms-anti-fraud**: Procesa y valida el monto de la trasación, apartir de ello aprueba o rechaza.
 
 ![Arquitectura](https://raw.githubusercontent.com/chaicopadillag/app-nodejs-codechallenge/develop/arquitectura.png)
 
-Sigue las pasos para correr los microservicios de la applicación.
+Sigue estos pasos para ejecutar los microservicios de la aplicación.
 
 ## Clonar el Monorepo
 
-```
+```bash
 git clone git@github.com:chaicopadillag/app-nodejs-codechallenge.git
 ```
 
 ## Instalación
 
-Realizar las instalaciones de las dependencias individualmente de los microservicios para corren en local de manera independiente. Omitir este paso si dockeriza los componentes.
+Instala las dependencias de cada microservicio de forma individual si deseas ejecutarlos localmente de manera independiente. Omitir este paso si planeas dockerizar los componentes.
 
-```bash
-$ yarn install
+```
+yarn install
+
 ```
 
-### Running the app
+## Ejecutar la aplicación
 
-```bash
-# development
-$ yarn run start
+```
+# modo desarrollo
+yarn run start
 
-# watch mode
-$ yarn run start:dev
+# modo watch
+yarn run start:dev
 
-# production mode
-$ yarn run start:prod
+# modo producción
+yarn run start:prod
+
 ```
 
-### Test
+## Pruebas
 
-```bash
-# unit tests
-$ yarn run test
+```
+# pruebas unitarias
+yarn run test
 
-# e2e tests
-$ yarn run test:e2e
+# pruebas end-to-end
+yarn run test:e2e
 
-# test coverage
-$ yarn run test:cov
+# cobertura de pruebas
+yarn run test:cov
+
 ```
 
 ## Dockerizar Componentes
 
-Para construir y levantar los componentes con docker ejecutar el siguiente comando, verficar que los componentes esten corriendo y si esta detenido iniciar manualmente.
+Para construir y ejecutar los componentes con Docker, utiliza el siguiente comando. Asegúrate de que los componentes estén en ejecución y, si no lo están, inícialos manualmente.
 
 ```
 docker compose up -d
+
 ```
 
-## Verificar
+## Verificación
 
-Para verificar ingresa a [http://localhost:8082/graphql](http://localhost:8082/graphql) y ejecutar el query `transactionTypes` para obtener los tipos de transacciones, seleccione un `id` del `transactionType` para crear una `Transaction` ejemplo:
+Para verificar, visita [http://localhost:8082/graphql](http://localhost:8082/graphql) y ejecuta la consulta transactionTypes para obtener los tipos de transacciones. Selecciona un id del transactionType para crear una Transaction. Por ejemplo:
 
 ```
 {
@@ -69,8 +78,9 @@ Para verificar ingresa a [http://localhost:8082/graphql](http://localhost:8082/g
     "value": 250
   }
 }
+
 ```
 
 ## Autor
 
-[Gerardo Chaico](https://chaicopadillag.github.io/) Full-stack Developer
+[Gerardo Chaico](https://chaicopadillag.github.io/) - Desarrollador Full-stack
