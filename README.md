@@ -1,82 +1,86 @@
-# Yape Code Challenge :rocket:
+# APP Transactions
 
-Our code challenge will let you marvel us with your Jedi coding skills :smile:. 
+## Arquitectura
 
-Don't forget that the proper way to submit your work is to fork the repo and create a PR :wink: ... have fun !!
+La aplicación consta de tres microservicios en Node.js:
 
-- [Problem](#problem)
-- [Tech Stack](#tech_stack)
-- [Send us your challenge](#send_us_your_challenge)
+- **api-gateway**: Maneja las solicitudes del cliente utilizando GraphQL y está integrado con Redis para la gestión de la caché.
+- **ms-transaction**: Se encarga de almacenar datos en la base de datos.
 
-# Problem
+- **ms-anti-fraud**: Procesa y valida el monto de la trasación, apartir de ello aprueba o rechaza.
 
-Every time a financial transaction is created it must be validated by our anti-fraud microservice and then the same service sends a message back to update the transaction status.
-For now, we have only three transaction statuses:
+![Arquitectura](https://raw.githubusercontent.com/chaicopadillag/app-nodejs-codechallenge/develop/arquitectura.png)
 
-<ol>
-  <li>pending</li>
-  <li>approved</li>
-  <li>rejected</li>  
-</ol>
+Sigue estos pasos para ejecutar los microservicios de la aplicación.
 
-Every transaction with a value greater than 1000 should be rejected.
+## Clonar el Monorepo
 
-```mermaid
-  flowchart LR
-    Transaction -- Save Transaction with pending Status --> transactionDatabase[(Database)]
-    Transaction --Send transaction Created event--> Anti-Fraud
-    Anti-Fraud -- Send transaction Status Approved event--> Transaction
-    Anti-Fraud -- Send transaction Status Rejected event--> Transaction
-    Transaction -- Update transaction Status event--> transactionDatabase[(Database)]
+```bash
+git clone git@github.com:chaicopadillag/app-nodejs-codechallenge.git
 ```
 
-# Tech Stack
+## Instalación
 
-<ol>
-  <li>Node. You can use any framework you want (i.e. Nestjs with an ORM like TypeOrm or Prisma) </li>
-  <li>Any database</li>
-  <li>Kafka</li>    
-</ol>
+Instala las dependencias de cada microservicio de forma individual si deseas ejecutarlos localmente de manera independiente. Omitir este paso si planeas dockerizar los componentes.
 
-We do provide a `Dockerfile` to help you get started with a dev environment.
+```
+yarn install
 
-You must have two resources:
+```
 
-1. Resource to create a transaction that must containt:
+## Ejecutar la aplicación
 
-```json
+```
+# modo desarrollo
+yarn run start
+
+# modo watch
+yarn run start:dev
+
+# modo producción
+yarn run start:prod
+
+```
+
+## Pruebas
+
+```
+# pruebas unitarias
+yarn run test
+
+# pruebas end-to-end
+yarn run test:e2e
+
+# cobertura de pruebas
+yarn run test:cov
+
+```
+
+## Dockerizar Componentes
+
+Para construir y ejecutar los componentes con Docker, utiliza el siguiente comando. Asegúrate de que los componentes estén en ejecución y, si no lo están, inícialos manualmente.
+
+```
+docker compose up -d
+
+```
+
+## Verificación
+
+Para verificar, visita [http://localhost:8082/graphql](http://localhost:8082/graphql) y ejecuta la consulta transactionTypes para obtener los tipos de transacciones. Selecciona un id del transactionType para crear una Transaction. Por ejemplo:
+
+```
 {
-  "accountExternalIdDebit": "Guid",
-  "accountExternalIdCredit": "Guid",
-  "tranferTypeId": 1,
-  "value": 120
+  "createTransaction": {
+     "accountExternalIdDebit": "82eb59e1-a9db-4d55-a7d9-20ae8ec11ba8",
+    "accountExternalIdCredit": "4343e650-f44a-40e7-963e-4b7aa6c865a2",
+    "transferTypeId": "38b135a7-263f-4591-87e2-ff3ca93615d2",
+    "value": 250
+  }
 }
+
 ```
 
-2. Resource to retrieve a transaction
+## Autor
 
-```json
-{
-  "transactionExternalId": "Guid",
-  "transactionType": {
-    "name": ""
-  },
-  "transactionStatus": {
-    "name": ""
-  },
-  "value": 120,
-  "createdAt": "Date"
-}
-```
-
-## Optional
-
-You can use any approach to store transaction data but you should consider that we may deal with high volume scenarios where we have a huge amount of writes and reads for the same data at the same time. How would you tackle this requirement?
-
-You can use Graphql;
-
-# Send us your challenge
-
-When you finish your challenge, after forking a repository, you **must** open a pull request to our repository. There are no limitations to the implementation, you can follow the programming paradigm, modularization, and style that you feel is the most appropriate solution.
-
-If you have any questions, please let us know.
+[Gerardo Chaico](https://chaicopadillag.github.io/) - Desarrollador Full-stack

@@ -1,0 +1,45 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Transaction Types"""
+type TransactionTypeEntity {
+  id: ID!
+  code: String!
+  name: String!
+}
+
+"""Type"""
+type TypeEntity {
+  name: String!
+}
+
+"""Transaction"""
+type TransactionEntity {
+  transactionExternalId: ID!
+  transactionType: TypeEntity!
+  transactionStatus: TypeEntity!
+  value: Float!
+  createdAt: String!
+}
+
+type Query {
+  """Un array de transacciones"""
+  transactions: [TransactionEntity!]!
+
+  """Obtener una transacción por su ID"""
+  transactionById(id: ID!): TransactionEntity!
+  transactionTypes: [TransactionTypeEntity!]!
+}
+
+type Mutation {
+  """Crea una nueva transacción"""
+  createTransaction(createTransaction: CreateTransactionInput!): TransactionEntity!
+}
+
+input CreateTransactionInput {
+  accountExternalIdDebit: ID!
+  accountExternalIdCredit: ID!
+  transferTypeId: ID!
+  value: Float!
+}
